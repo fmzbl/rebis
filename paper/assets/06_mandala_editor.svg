@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520">
+  <style>.bg{fill:#160f11}.panel{fill:#211619;stroke:#6e3038;stroke-width:3}.line{stroke:#d8a35e;stroke-width:5;fill:none}.atom{fill:#211619;stroke:#eadbd2;stroke-width:4}.box{fill:#4a252b;stroke:#d8a35e;stroke-width:4}.t{fill:#eadbd2;font:21px monospace}.dim{fill:#a99a98;font:17px monospace}.op{fill:#65c1b6;font:bold 22px monospace}.h{fill:#d8a35e;font:bold 25px sans-serif}</style>
+  <rect class="bg" width="1100" height="520" rx="20"/>
+  <rect class="panel" x="25" y="25" width="475" height="470" rx="14"/>
+  <text class="h" x="50" y="65">SOURCE · VIM-LIKE EDITOR</text>
+  <text class="dim" x="52" y="112">1 │</text><text class="op" x="105" y="112">(["mediate"]</text>
+  <text class="dim" x="52" y="152">2 │</text><text class="t" x="125" y="152">release</text>
+  <text class="dim" x="52" y="192">3 │</text><text class="op" x="125" y="192">["trace"]</text><text class="t" x="225" y="192"> "tokenizer regression"</text><text class="op" x="485" y="192">)</text>
+  <text class="dim" x="52" y="232">4 │</text><text class="op" x="105" y="232">)</text>
+  <rect x="98" y="84" width="135" height="34" fill="#71343c"/><text class="op" x="105" y="112">(["mediate"]</text>
+  <rect x="100" y="204" width="20" height="34" fill="#71343c"/><text class="op" x="105" y="232">)</text>
+  <text class="dim" x="52" y="325">NORMAL  1:1   matching () highlighted</text>
+  <text class="dim" x="52" y="365">% jump  :fmt  :rec  :run</text>
+  <text class="dim" x="52" y="405">:mandala  :tree</text>
+  <rect class="panel" x="530" y="25" width="545" height="470" rx="14"/>
+  <text class="h" x="555" y="65">o-[]-o-[]-o MANDALA</text>
+  <circle class="atom" cx="615" cy="240" r="48"/><text class="t" x="574" y="247">release</text>
+  <path class="line" d="M663 240 H720"/><rect class="box" x="720" y="195" width="90" height="90" rx="10"/><text class="op" x="744" y="249">[]</text>
+  <path class="line" d="M810 240 H860"/><circle class="atom" cx="910" cy="240" r="50"/><text class="t" x="856" y="247">tokenizer</text>
+  <path class="line" d="M910 290 V340 H975"/><rect class="box" x="975" y="310" width="65" height="60" rx="8"/><text class="op" x="987" y="348">[]</text>
+  <circle class="atom" cx="855" cy="405" r="52"/><text class="t" x="795" y="412">regression</text><path class="line" d="M907 405 H1007 V370"/>
+  <text class="dim" x="570" y="465">circles = atoms · squares = mediators</text>
+</svg>

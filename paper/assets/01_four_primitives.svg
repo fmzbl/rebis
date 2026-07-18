@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Rebis's four language primitives</title>
+  <desc id="desc">A whiteboard-like triangular palette introduces left-to-right pipelines, explicit mediation, right-to-left pipelines, and scoped fan-out regions.</desc>
+  <defs>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#087e99"/>
+    </marker>
+    <marker id="arrow-magenta" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#a92a68"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#261c35" flood-opacity=".12"/>
+    </filter>
+    <style>
+      .bg{fill:#f6f1e7}.ink{fill:#251d30}.muted{fill:#6d6475}.cyan{fill:#087e99}.magenta{fill:#a92a68}.gold{fill:#9b6a00}
+      .title{font:700 44px ui-serif,Georgia,serif;fill:#251d30}.subtitle{font:500 20px system-ui,sans-serif;fill:#6d6475}
+      .symbol{font:700 58px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#251d30}.name{font:700 22px system-ui,sans-serif;fill:#251d30}
+      .copy{font:500 17px system-ui,sans-serif;fill:#4c4455}.law{font:600 16px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#251d30}
+      .card{fill:#fffdf8;stroke:#d8cfc0;stroke-width:2}.rough{fill:none;stroke:#2e2854;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+      .small{font:700 13px system-ui,sans-serif;letter-spacing:.12em;fill:#7b7183}
+    </style>
+  </defs>
+  <rect width="1440" height="900" class="bg"/>
+  <text x="720" y="72" text-anchor="middle" class="title">Four marks, four different jobs</text>
+  <text x="720" y="108" text-anchor="middle" class="subtitle">The arrows choose execution order; mediation is an explicit join; parentheses preserve a boundary.</text>
+
+  <!-- faithful abstraction of the whiteboard's left-hand primitive palette -->
+  <g transform="translate(72 150)" aria-label="whiteboard primitive palette">
+    <path d="M20 530 L210 15 L405 530 Z" class="rough" opacity=".9"/>
+    <text x="210" y="128" text-anchor="middle" class="symbol cyan">→</text>
+    <text x="210" y="242" text-anchor="middle" class="symbol gold">~</text>
+    <text x="210" y="356" text-anchor="middle" class="symbol magenta">←</text>
+    <text x="210" y="478" text-anchor="middle" class="symbol ink">( )</text>
+    <text x="210" y="578" text-anchor="middle" class="small">WHITEBOARD PALETTE</text>
+  </g>
+
+  <g transform="translate(530 154)">
+    <g filter="url(#shadow)">
+      <rect width="390" height="270" rx="22" class="card"/>
+      <rect width="10" height="270" rx="5" fill="#087e99"/>
+    </g>
+    <text x="34" y="61" class="symbol cyan">→</text>
+    <text x="126" y="52" class="name">Forward</text>
+    <text x="126" y="80" class="small">LEFT-TO-RIGHT PIPELINE</text>
+    <path d="M55 122 H330" stroke="#087e99" stroke-width="5" marker-end="url(#arrow-cyan)"/>
+    <text x="34" y="164" class="copy">Runs the first child on the input, then</text>
+    <text x="34" y="189" class="copy">pipes each JSON result into the next</text>
+    <text x="34" y="214" class="copy">child in source order.</text>
+    <text x="34" y="249" class="law">run(A → B, x) = B(A(x))</text>
+  </g>
+
+  <g transform="translate(960 154)">
+    <g filter="url(#shadow)">
+      <rect width="390" height="270" rx="22" class="card"/>
+      <rect width="10" height="270" rx="5" fill="#b98300"/>
+    </g>
+    <text x="34" y="61" class="symbol gold">~</text>
+    <text x="126" y="52" class="name">Mediate</text>
+    <text x="126" y="80" class="small">SAME-INPUT BRANCHES · EXPLICIT JOIN</text>
+    <circle cx="93" cy="126" r="28" fill="#edf8fa" stroke="#087e99" stroke-width="4"/>
+    <circle cx="297" cy="126" r="28" fill="#faedf3" stroke="#a92a68" stroke-width="4"/>
+    <rect x="178" y="104" width="34" height="44" rx="6" fill="#fff5d5" stroke="#b98300" stroke-width="4"/>
+    <path d="M121 126 H178 M212 126 H269" stroke="#61556d" stroke-width="4"/>
+    <text x="34" y="181" class="copy">Runs every branch on the same JSON input.</text>
+    <text x="34" y="206" class="copy">The host explicitly mediates the ordered</text>
+    <text x="34" y="231" class="copy">results; the default collects an array.</text>
+    <text x="34" y="258" class="law">joinₕ([A(x), B(x)], x)</text>
+  </g>
+
+  <g transform="translate(530 464)">
+    <g filter="url(#shadow)">
+      <rect width="390" height="270" rx="22" class="card"/>
+      <rect width="10" height="270" rx="5" fill="#a92a68"/>
+    </g>
+    <text x="34" y="61" class="symbol magenta">←</text>
+    <text x="126" y="52" class="name">Backflow</text>
+    <text x="126" y="80" class="small">RIGHT-TO-LEFT PIPELINE</text>
+    <path d="M330 122 H55" stroke="#a92a68" stroke-width="5" marker-end="url(#arrow-magenta)"/>
+    <text x="34" y="164" class="copy">Starts with the rightmost child and pipes</text>
+    <text x="34" y="189" class="copy">results back toward the left. Host calls</text>
+    <text x="34" y="214" class="copy">may be lossy or effectful.</text>
+    <text x="34" y="249" class="law">run(A ← B, x) = A(B(x))</text>
+  </g>
+
+  <g transform="translate(960 464)">
+    <g filter="url(#shadow)">
+      <rect width="390" height="270" rx="22" class="card"/>
+      <rect width="10" height="270" rx="5" fill="#544763"/>
+    </g>
+    <text x="34" y="61" class="symbol ink">( )</text>
+    <text x="151" y="52" class="name">Group</text>
+    <text x="151" y="80" class="small">SCOPED ORDERED FAN-OUT</text>
+    <ellipse cx="195" cy="126" rx="136" ry="42" fill="#f5f0f8" stroke="#544763" stroke-width="4"/>
+    <circle cx="153" cy="126" r="16" fill="#fff" stroke="#087e99" stroke-width="3"/>
+    <circle cx="237" cy="126" r="16" fill="#fff" stroke="#a92a68" stroke-width="3"/>
+    <text x="34" y="181" class="copy">Runs each child on the same input and</text>
+    <text x="34" y="206" class="copy">collects outputs in source order. The</text>
+    <text x="34" y="231" class="copy">boundary remains a first-class region.</text>
+    <text x="34" y="258" class="law">group ≠ flatten</text>
+  </g>
+
+  <rect x="530" y="778" width="820" height="72" rx="16" fill="#292033"/>
+  <text x="940" y="808" text-anchor="middle" fill="#fff" class="name">Opposed execution orders — never advertised as exact inverse functions</text>
+  <text x="940" y="835" text-anchor="middle" fill="#d8cfdf" class="copy">Forward composes left-to-right; Backflow composes the same syntax right-to-left.</text>
+</svg>

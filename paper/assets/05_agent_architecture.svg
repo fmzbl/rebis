@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430">
+  <style>.bg{fill:#160f11}.line{stroke:#bd8d55;stroke-width:3;fill:none}.atom{fill:#2a1a1e;stroke:#eadbd2;stroke-width:3}.square{fill:#482329;stroke:#d8a35e;stroke-width:3}.judge{fill:#182b2b;stroke:#5bb8ae;stroke-width:3}.t{fill:#eadbd2;font:20px sans-serif}.s{fill:#b9aaa7;font:16px sans-serif}.h{fill:#d8a35e;font:bold 25px sans-serif}</style>
+  <rect class="bg" width="1100" height="430" rx="20"/>
+  <text class="h" x="40" y="48">One expression, one bounded agent organization</text>
+  <circle class="atom" cx="105" cy="135" r="42"/><text class="t" x="72" y="142">release</text>
+  <circle class="atom" cx="105" cy="245" r="42"/><text class="t" x="66" y="252">tokenizer</text>
+  <path class="line" d="M147 135 L245 175 M147 245 L245 205"/>
+  <rect class="square" x="245" y="145" width="150" height="90" rx="12"/><text class="t" x="274" y="182">□ mediator</text><text class="s" x="277" y="210">may generate</text>
+  <path class="line" d="M395 190 H480"/>
+  <circle class="atom" cx="520" cy="290" r="42"/><text class="t" x="475" y="297">regression</text>
+  <path class="line" d="M480 190 H625 M562 290 L625 220"/>
+  <rect class="judge" x="625" y="150" width="180" height="90" rx="45"/><text class="t" x="660" y="188">← judge</text><text class="s" x="649" y="216">never generates</text>
+  <path class="line" d="M805 195 H900"/>
+  <circle class="atom" cx="950" cy="195" r="48"/><text class="t" x="915" y="202">result</text>
+  <text class="s" x="40" y="390">Quoted strings are prompts · ~ defines macros · bracketed mediators compose ordered results</text>
+</svg>

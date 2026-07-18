@@ -1,0 +1,16 @@
+; std/evolve — judged self-improvement.
+;
+; The hill-climbing kernel, pure. The judge is a topical gate, not a
+; correctness oracle — mechanical fitness (tests, compilers) stays host-side.
+; Cost: geometric in rounds; bound with expansion and model-call budgets.
+(
+  ; (evolve judge improver value) — one step: current vs improved, judge
+  ; keeps the better. A symbol judge gives promptless selection pressure.
+  (~ evolve (judge improver value) '([,judge] ,value (,improver ,value)))
+
+  ; (ascend value improver judge stop) — iterate evolve to a judged stop.
+  (~ ascend (value improver judge stop)
+    ([(stop value)]
+      value
+      (ascend (evolve judge improver value) improver judge stop)))
+)

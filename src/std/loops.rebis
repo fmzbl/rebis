@@ -1,0 +1,22 @@
+; std/loops — iteration and convergence.
+;
+; No recursion operator exists: a macro may call itself, and the lazy
+; conditional square decides whether the recursive call expands. Budgets
+; (expansions, model calls) are the hard backstop.
+(
+  ; (loop value step stop) — iterate step until stop answers yes.
+  ; step and stop are caller macros; stop must yield exactly yes or no
+  ; (see std/canon's yes-no protocol). Cost: a spliced value re-executes
+  ; where used — step fires in the stop check and again in the selected
+  ; continuation, up to twice per round.
+  (~ loop (value step stop)
+    ([(stop value)] value (loop (step value) step stop)))
+
+  ; (stabilize value step same) — iterate until refinement stops changing
+  ; the answer; same is a yes/no comparator of two values (std/canon's
+  ; agreed). Cost: step fires up to three times per round.
+  (~ stabilize (value step same)
+    ([(same value (step value))]
+      (step value)
+      (stabilize (step value) step same)))
+)

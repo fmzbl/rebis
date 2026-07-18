@@ -1,0 +1,13 @@
+; Promptless best-of-three from the standard library.
+;
+; Three attempts fire (concurrently under the parallel evaluator); the
+; symbol judge mediates deterministically — the answer that best
+; round-trips onto {staged, rollback, plan} wins, and no model call is
+; spent on judging.
+;
+;   kaos rebis run examples/best-of.rebis
+(
+  (# std/spread)
+  (# std/shape)
+  (best-of-three staged-rollback-plan
+    (final-only "Write a staged rollback plan for the billing migration.")))

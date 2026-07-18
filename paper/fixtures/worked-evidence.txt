@@ -1,0 +1,12 @@
+source bridge
+source alpha
+source beta
+source gamma
+source delta
+source epsilon
+target bridge
+target isolated
+context bridge
+context isolated
+verifier context
+verifier unrelated

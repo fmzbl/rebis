@@ -1,0 +1,18 @@
+; std/gate — guards and fallbacks (the holonomy triangle as control flow).
+;
+; These expect a SYMBOL topic/judge for deterministic gating; a prompt
+; works too and mediates conventionally.
+(
+  ; (gate topic work) — single-branch on-topic guard: the square yields
+  ; nothing when the answer cannot round-trip onto the topic's tokens.
+  (~ gate (topic work) '([,topic] ,work))
+
+  ; (or-else topic primary fallback) — deterministic ties resolve to source
+  ; order, so the primary wins whenever it stays on topic; the fallback
+  ; only wins when the primary drifts. Cost: both branches fire.
+  (~ or-else (topic primary fallback) '([,topic] ,primary ,fallback))
+
+  ; (audit judge work redo) — converge two independent derivations of the
+  ; same result. Cost: the work is done twice, by construction.
+  (~ audit (judge work redo) '([,judge] ,work ,redo))
+)

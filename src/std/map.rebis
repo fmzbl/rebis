@@ -1,0 +1,18 @@
+; std/map — static decomposition (map/reduce topology).
+;
+; One worker across caller-enumerated inputs, or many workers across one
+; input, merged by a judge. Parts are static syntax by design: the language
+; cannot destructure a model answer into branches, so dynamic decomposition
+; honestly remains a host/program pattern.
+(
+  ; (map-two merge worker a b) — worker over two inputs, merged.
+  (~ map-two (merge worker a b) '([,merge] (,worker ,a) (,worker ,b)))
+
+  ; (map-three merge worker a b c) — worker over three inputs, merged.
+  (~ map-three (merge worker a b c)
+    '([,merge] (,worker ,a) (,worker ,b) (,worker ,c)))
+
+  ; (zip merge left-worker right-worker value) — two workers over one input.
+  (~ zip (merge left-worker right-worker value)
+    '([,merge] (,left-worker ,value) (,right-worker ,value)))
+)

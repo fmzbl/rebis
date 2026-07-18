@@ -1,0 +1,25 @@
+; std/flow — application and composition.
+;
+; The higher-order kernel: apply a worker, compose two strategies, reorder a
+; binary worker, repeat sequentially, converge heterogeneous branches.
+; Structural module: no prompt text — workers and judges are parameters.
+(
+  ; (apply worker value) — the higher-order seam: call worker on value.
+  (~ apply (worker value) '(,worker ,value))
+
+  ; (compose outer inner value) — outer over inner's result: (outer (inner value)).
+  (~ compose (outer inner value) '(,outer (,inner ,value)))
+
+  ; (flip worker a b) — worker with its two arguments swapped.
+  (~ flip (worker a b) '(,worker ,b ,a))
+
+  ; (twice work) — sequential re-application: the answer feeds the same work again.
+  (~ twice (work) '(-> ,work ,work))
+
+  ; (fan judge left right) — two different branches converged by a judge.
+  ; A symbol judge mediates deterministically; a prompt judge fires a model.
+  (~ fan (judge left right) '([,judge] ,left ,right))
+
+  ; (fan-three judge a b c) — three-way fan, same judge semantics.
+  (~ fan-three (judge a b c) '([,judge] ,a ,b ,c))
+)

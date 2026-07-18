@@ -1,0 +1,16 @@
+; std/spread — verified best-of-k.
+;
+; The same work fired k ways (concurrently under the parallel evaluator),
+; collapsed by a judge. With a symbol judge this is promptless best-of-k:
+; k model calls, zero judging calls. Arity family — the language has no
+; numerals. Cost: work fires k times.
+(
+  ; (best-of-two judge work)
+  (~ best-of-two (judge work) '([,judge] ,work ,work))
+
+  ; (best-of-three judge work)
+  (~ best-of-three (judge work) '([,judge] ,work ,work ,work))
+
+  ; (best-of-five judge work)
+  (~ best-of-five (judge work) '([,judge] ,work ,work ,work ,work ,work))
+)

@@ -1,0 +1,19 @@
+; std/committee — structured group deliberation.
+(
+  ; (chaired-panel chair judge a b c task) — the chair's answer (criteria,
+  ; framing) flows through the arrow INTO the square, so every panelist
+  ; receives it as input alongside the task.
+  (~ chaired-panel (chair judge a b c task)
+    '(-> (,chair ,task) ([,judge] (,a ,task) (,b ,task) (,c ,task))))
+
+  ; (quorum agree proceed abort left right) — lazy agreement gate: if the
+  ; two positions are judged in agreement, proceed; else abort. Only the
+  ; selected continuation expands.
+  (~ quorum (agree proceed abort left right)
+    ([(agree left right)] proceed abort))
+
+  ; (campaign planner executor reviewer task) — plan, execute with the plan
+  ; as input, review with the execution as input.
+  (~ campaign (planner executor reviewer task)
+    '(-> (,planner ,task) (,executor ,task) (,reviewer ,task)))
+)

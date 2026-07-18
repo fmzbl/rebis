@@ -1,0 +1,20 @@
+; std/tournament — bracket reduction and consensus.
+(
+  ; Re-exported foundation: best-of-k.
+  (# std/spread)
+
+  ; (tournament-four judge work) — four attempts, two semifinals, one
+  ; final: best-of-two of best-of-twos. Cost: work fires four times.
+  (~ tournament-four (judge work)
+    '([,judge] (best-of-two ,judge ,work) (best-of-two ,judge ,work)))
+
+  ; (playoff judge semi-a semi-b) — a final over two prepared semifinals
+  ; (each typically itself a square).
+  (~ playoff (judge semi-a semi-b)
+    '([,judge] ,semi-a ,semi-b))
+
+  ; (consensus-three reconciler work) — selection's counterpart: three
+  ; attempts MERGED by a reconciler rather than one picked.
+  (~ consensus-three (reconciler work)
+    '([,reconciler] ,work ,work ,work))
+)

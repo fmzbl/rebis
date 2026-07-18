@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rebis: an atomic prompt-architecture language with structural abstraction depth.">
+  <title>Rebis — An Atomic Language to Program AI</title>
+  <link rel="stylesheet" href="paper.css">
+</head>
+<body>
+<article>
+  <header class="hero">
+    <p class="kicker">Language paper · reference contract 0.5</p>
+    <h1>Rebis</h1>
+    <p class="subtitle">An Atomic Language to Program AI</p>
+    <p class="sigil">o-[]-o-[]-o</p>
+    <p class="lede">A pure S-expression prompt language with executable mediators,
+      explicit answer flow, and an auditable organization chart for agents and
+      subagents.</p>
+    <div class="metadata">
+      <div><b>Language</b>Rebis 0.5</div>
+      <div><b>Implementation</b><code>rebis-lang</code></div>
+      <div><b>Host</b>Kaos</div>
+      <div><b>License</b>GPL-3.0-or-later</div>
+    </div>
+  </header>
+
+  <section class="abstract">
+    <h2>Abstract</h2>
+    <p>Rebis is a minimal language for executing an S-expression as a system of
+      language-model agents. Quoted strings are raw prompts, bare atoms are
+      Lisp-like symbols, <code>~</code> defines structural macros, and
+      <code>#</code> imports definition-only modules through a host resolver. Its
+      compound forms are executable square mediation <code>[M]</code>, forward
+      answer flow <code>-&gt;</code>, and backward answer flow <code>&lt;-</code>.
+      In <code>([M] A B)</code>, branches run first and their ordered actual answers
+      become input to mediator program <code>M</code>. Arrows route answers without
+      invoking a model themselves.</p>
+    <p>This makes orchestration visible, refusal first-class, and cost
+      bounded by host-controlled expansion and execution budgets. The reference Rust implementation is dependency
+      free. Kaos hosts live model calls, a Vim-like editor, structural bracket
+      highlighting, execution traces, and two projections of a program: an
+      expression tree and the whiteboard-derived <code>o-[]-o-[]-o</code> mandala.</p>
+  </section>
+
+  <nav>
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#origin">Whiteboard thesis</a></li>
+      <li><a href="#language">Language</a></li>
+      <li><a href="#record">Record calculus</a></li>
+      <li><a href="#agents">Agent execution</a></li>
+      <li><a href="#mandala">Tree, editor, and mandala</a></li>
+      <li><a href="#example">Worked mundane-data example</a></li>
+      <li><a href="#hosting">Hosting and operational contract</a></li>
+      <li><a href="#claims">Claims, limits, and tests</a></li>
+    </ol>
+  </nav>
+
+  <section id="origin">
+    <h2>1. Whiteboard thesis</h2>
+    <p>The source design begins with a compact alphabet: two directed arrows, one
+      executable mediator square, and structural parentheses. A second drawing turns the same
+      program into circles joined through boxes. A third nests these graphs inside
+      regions. Rebis keeps the durable insight and removes accidental machinery:
+      source, agent hierarchy, and visualization are projections of one expression.</p>
+    <aside><strong>Executable square.</strong> In <code>([M] A B)</code>, the
+      brackets structurally contain mediator program <code>M</code>. Branches
+      <code>A</code> and <code>B</code> run first; their ordered answers become the
+      input to <code>M</code>.</aside>
+    <p>The resulting design has a sharp authority boundary. Models may scout and
+      mediate. Arrows route actual answers between visible programs; no hidden
+      orchestration prompt is introduced.</p>
+  </section>
+
+  <section id="language">
+    <h2>2. Language</h2>
+    <pre><code>program := expr EOF
+expr    := prompt | symbol | '\'' expr | ',' expr | '(' form ')'
+form    := '~' symbol '(' symbol* ')' expr
+         | '#' module | '[' expr ']' expr+
+         | op expr expr+ | symbol expr* | expr+
+op      := '-&gt;' | '&lt;-'</code></pre>
+    <p>Operators occur first and chains associate left. Thus
+      <code>([M] A B ...)</code> contains one mediator and one or more branches.
+      Only quoted strings fire models. Bare atoms name macros and lexical
+      parameters. Parentheses and square brackets are structural boundaries.</p>
+    <table>
+      <thead><tr><th>Form</th><th>Pure meaning</th><th>Agent meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>"prompt"</code></td><td>raw prompt</td><td>fires one model agent</td></tr>
+        <tr><td><code>a</code></td><td>symbol</td><td>macro or parameter reference</td></tr>
+        <tr><td><code>(~ f (x) body)</code></td><td>macro definition</td><td>structural expansion on <code>(f argument)</code></td></tr>
+        <tr><td><code>(# module)</code></td><td>lexical module import</td><td>load definition-only host-resolved hypersigil exports</td></tr>
+        <tr><td><code>'tree</code> / <code>,x</code></td><td>syntax template / splice</td><td>construct Rebis code without firing a model</td></tr>
+        <tr><td><code>([M] A B)</code></td><td>explicit convergence</td><td>run branches, then execute mediator program M over their answers</td></tr>
+        <tr><td><code>(&lt;- a b)</code></td><td>reverse value flow</td><td>run b, supply its answers to a</td></tr>
+        <tr><td><code>(-&gt; a b)</code></td><td>forward value flow</td><td>run a, supply its answers to b</td></tr>
+      </tbody>
+    </table>
+    <p>Macros are higher-order over named symbols. If parameter <code>worker</code>
+      occurs as the head of <code>(worker target)</code>, passing symbol
+      <code>inspect</code> substitutes the call head and produces
+      <code>(inspect target)</code>. The reference contract intentionally excludes
+      anonymous closures, currying, and partial application.</p>
+    <h3>2.1 One abstraction mechanism</h3>
+    <p>A <code>~</code> definition receives unevaluated Rebis expressions and
+      expands to another Rebis tree. Function-like use is only the simplest
+      macro convention; there is no second runtime function mechanism. An
+      unquoted body is an implicit structural template. An explicitly quoted
+      body supports Lisp-style construction: comma inserts a complete caller
+      expression without changing characters inside prompt text.</p>
+    <pre><code>(
+  (~ twice (work) '(-&gt; ,work ,work))
+  (twice "Inspect and improve this code."))</code></pre>
+    <p>The call expands deterministically before the resulting agent graph runs.
+      Macro names may also be passed in call-head position, producing
+      higher-order graph combinators without another abstraction form.</p>
+    <h3>2.2 Foundational modules</h3>
+    <p><code>(# engineering)</code> imports top-level macro definitions from a
+      validated symbolic module. The language core performs no I/O: a
+      <code>ModuleResolver</code> may map names to Kaos hypersigils, embedded
+      <code>std/...</code> modules, or a future package store. Modules may contain
+      only definitions and nested imports. Resolution is bounded and cached;
+      missing modules, invalid bodies, cycles, and storage failures are typed
+      diagnostics.</p>
+    <pre><code>(
+  (# engineering)
+  (repair "Fix the cancellation lifecycle"))</code></pre>
+    <h3>2.3 Loops without a recursion operator</h3>
+    <p>A macro body may call its own name. For runtime termination, a two-branch
+      square whose mediator is a macro call is lazy: it runs the bracketed call
+      first, requires an exact <code>yes</code> or <code>no</code> answer, and runs
+      only the selected branch.</p>
+    <pre><code>(~ loop (value step stop)
+  ([(stop value)]
+    value
+    (loop (step value) step stop)))</code></pre>
+    <p>This derives loops from macros and the existing square rather than adding
+      a recursion keyword. Prompt mediators and squares
+      of other arities retain branch-first mediation. The reference orchestrator
+      permits at most 256 macro expansions in one run.</p>
+    <h3>2.4 Canonical form</h3>
+    <p>The formatter preserves singleton grouping, flattens like-operator
+      chains, preserves operand order, and breaks forms wider than sixty columns.
+      Parsing errors carry a UTF-8 byte offset for editor diagnostics.</p>
+  </section>
+
+  <section id="record">
+    <h2>3. Record calculus</h2>
+    <p>A <em>Record</em> is a sequence of raw text lines plus a co-occurrence graph.
+      Lowercased content tokens are vertices; terms sharing a line are adjacent.
+      Raw lines remain available for prompts and audit. Generated answers can be
+      appended, explicitly, as additional evidence.</p>
+    <p>Evaluation returns a concept <em>C = (T, E, s)</em>: terms <em>T</em>, evidence
+      line indexes <em>E</em>, and score <em>s</em> in <code>[0,1]</code>.</p>
+    <h3>3.1 Square</h3>
+    <p>For concepts <em>A</em> and <em>B</em>, broaden both evidence sets by one graph
+      hop. Their intersection is common ground. The score is Jaccard overlap:</p>
+    <p class="equation">square(A,B).score = |b(A) ∩ b(B)| / |b(A) ∪ b(B)|</p>
+    <p>A zero is not an exception. It states that the record does not presently
+      connect the operands.</p>
+    <h3>3.2 Arrows</h3>
+    <p><code>(&lt;- a b)</code> keeps evidence for <em>a</em> reached by broadened
+      <em>b</em>. Its score is the surviving fraction. Evidence-free records use a
+      term-coverage fallback so structural reflection can still fail honestly.</p>
+    <p class="equation">eval((-&gt; a b), R) = eval((&lt;- b a), R)</p>
+    <p>This law is exact and tested. An arrow is attribution, not generation and not
+      an assertion that either operand is a mathematical inverse.</p>
+  </section>
+
+  <section id="agents">
+    <h2>4. Agent execution</h2>
+    <p>A host implements a small fallible boundary:</p>
+    <pre><code>trait Oracle {
+    fn try_fire(&amp;self, prompt: &amp;str) -&gt; Result&lt;Option&lt;String&gt;, String&gt;;
+}</code></pre>
+    <p>Every quoted prompt becomes a subagent. Bare symbols never fire a model.
+      Macro calls substitute argument expressions structurally into their
+      bodies without interpolating text inside quoted prompts. Macro symbols
+      may themselves be arguments, allowing reusable agent combinators.
+      Every square executes the mediator code written inside its brackets; there is
+      no hidden global mediator prompt. The mediator receives labeled, ordered branch
+      results. A square therefore becomes a
+      mediator subagent. A non-refusal answer is appended to the record before the
+      expression is evaluated again. Arrows make no calls themselves; they pass
+      the actual labeled answers from one side into the other.</p>
+    <aside><strong>Expansion budget.</strong> A macro may repeat a parameter or
+      worker call. Hosts must therefore bound expanded program size and model
+      firings, not merely count forms in the unexpanded source. The reference
+      <code>RuntimeLimits</code> defaults to 256 expansions, 64 distinct module
+      loads, and 1,024 model calls; calls beyond the limit never cross the
+      provider boundary.</aside>
+    <img src="assets/05_agent_architecture.svg" alt="Rebis expression mapped to scout agents, mediator agents, and deterministic arrow judges">
+    <p>The returned orchestration contains the final concept, typed runtime
+      diagnostics, typed execution events, and a trace of
+      <code>Firing { agent, prompt, answer }</code>. An observer receives events
+      synchronously for live host rendering. Without recursive expansion,
+      syntax-tree size bounds potential model calls. With self-calling macros,
+      the host's expansion, firing, token, time, and spending limits provide the
+      operational bound.</p>
+    <aside><strong>Separation of authority.</strong> A mediator may propose a bridge;
+      the subsequent arrow independently measures whether that bridge reaches the
+      requested evidence. Model prose never directly sets a score.</aside>
+  </section>
+
+  <section id="mandala">
+    <h2>5. Tree, editor, and mandala</h2>
+    <p>The Unicode tree is the organization chart: <code>○</code> marks a prompt,
+      <code>◇</code> a symbol, <code>λ</code> a definition, <code>@</code> a call,
+      <code>□</code> a mediator, and <code>→</code>/<code>←</code> arrows. With a record loaded, every node is annotated with
+      its score and evidence count.</p>
+    <p>The mandala is the circuit projection. It repeats the whiteboard identity
+      <code>o-[]-o-[]-o</code>. Prompts and values are <code>o</code> terminals,
+      mediators are <code>[M: code]</code>, definitions are
+      <code>~[f(parameters)]</code> templates, and calls are <code>[f]</code>
+      squares. Macros therefore reuse the whiteboard geometry instead of
+      adding another primitive. Nested expressions remain nested circuits.</p>
+    <img src="assets/06_mandala_editor.svg" alt="Vim-like Rebis source editor beside the o-[]-o-[]-o mandala visualization">
+    <p>Kaos embeds both projections beside a direct editor with an optional
+      Vim-compatible mode. It provides normal,
+      insert, and command modes; Unicode-safe motions; <code>dd</code>, undo/redo,
+      pair insertion, diagnostics, canonical formatting, and file operations.
+      Structural parentheses and square brackets are inserted and highlighted as
+      matching pairs; <code>%</code> jumps between them.</p>
+    <pre><code>/mandala       " whiteboard circuit (default)
+/tree          " scored expression tree
+/graph         " focus the scrollable graph
+/panel hide    " hide the graph panel
+/run           " run through the selected Kaos model
+/format        " canonicalize source
+:w file.rebis  " Vim save
+:q             " Vim close</code></pre>
+    <p>Pressing <code>/</code> enters Kaos command mode; <code>:</code> remains Vim
+      command mode. The editor implements normal, insert, character-visual, and
+      line-visual selection. With graph focus, motions, arrows, and page keys
+      scroll both axes. The mandala assigns real rows to groups, branches,
+      macro templates, calls, mediators, and arrow stages. The slash-command palette
+      filters while typing and supports arrow selection and completion. Rebis is
+      the default Kaos screen; <code>/chat</code> switches interfaces. During
+      <code>/run</code>, the right pane becomes a live firing trace and final
+      score. <code>Ctrl-C</code> cancels. The CLI exposes the same views through
+      <code>kaos rebis tree</code> and <code>kaos rebis mandala</code>.</p>
+  </section>
+
+  <section id="example">
+    <h2>6. Worked mundane-data example</h2>
+    <p>Consider five lines from a pizza shop:</p>
+    <pre><code>friday 41 margherita orders
+oven broke friday night
+saturday refunds spiked
+saturday 12 orders were refunded after the oven failure
+sunday the oven was repaired</code></pre>
+    <pre><code>$ cat orders.txt | rebis '(["Summarize the connection"] "oven" "refunds")'
+score    0.250
+terms    12 after failure oven saturday
+evidence 1 line(s)
+
+$ cat orders.txt | rebis '(&lt;- "refunds" "friday")'
+score    0.000
+terms    refunds
+evidence 0 line(s)</code></pre>
+    <p>The first query finds one connecting line but reports weak overlap. The
+      second refuses a tempting story: Friday does not reach the direct refund line
+      under the graph rule. These values are produced by the reference binary and
+      pinned in a unit test.</p>
+    <h3>6.1 Incident program</h3>
+    <pre><code>(["Write the incident report"]
+  "Inspect the release and tokenizer changes"
+  "Trace the regression through Unicode handling"
+  "Check which customers are affected")</code></pre>
+    <p>The three investigations run first. Their ordered answers are then supplied
+      to the explicit report-writing mediator.</p>
+  </section>
+
+  <section id="hosting">
+    <h2>7. Hosting and operational contract</h2>
+    <p>The core crate performs no network I/O and has zero dependencies. A host owns
+      provider authentication, model selection, timeouts, token budgets, retries,
+      redaction, concurrency, persistence, and user authorization.</p>
+    <p>Kaos adapts its configured <code>Spec</code> to <code>Oracle</code>. The command</p>
+    <pre><code>cat notes.txt | kaos rebis run program.rebis</code></pre>
+    <p>uses the same Claude, OpenAI, OpenRouter, or Ollama selection as the rest of
+      the application. <code>run --dry</code> traverses the actual agent tree with
+      every call refusing, enabling topology and trace tests without network access.
+      The legacy <code>kaos mirror</code> command and myth gate spelling
+      <code>(mirror P)</code> remain compatibility surfaces, not additional Rebis
+      syntax.</p>
+    <p>Answers are untrusted text. Rebis does not execute tool calls found in them.
+      A production host should persist the firing trace and distinguish original
+      record lines from generated additions.</p>
+  </section>
+
+  <section id="claims">
+    <h2>8. Claims, limits, and tests</h2>
+    <table>
+      <thead><tr><th>Property</th><th>Status</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>Three-operator grammar and multiline parsing</td><td>implemented</td><td>parser tests</td></tr>
+        <tr><td><code>-&gt;</code>/<code>&lt;-</code> law</td><td>implemented</td><td>equality tests across records</td></tr>
+        <tr><td>arrows never generate</td><td>implemented</td><td>oracle call-count tests</td></tr>
+        <tr><td>call count bounded by nodes</td><td>implemented</td><td>orchestration tests</td></tr>
+        <tr><td>bounded cached module graph</td><td>implemented</td><td>import, cycle, validation, and resolver tests</td></tr>
+        <tr><td>typed runtime observability</td><td>implemented</td><td>diagnostic and live-event conformance tests</td></tr>
+        <tr><td>pizza outputs</td><td>measured</td><td>CLI run and pinned unit test</td></tr>
+        <tr><td>LLM answer quality</td><td>not claimed</td><td>provider- and task-dependent</td></tr>
+      </tbody>
+    </table>
+    <p>Rebis does not establish truth from co-occurrence, guarantee that a generated
+      bridge is correct, or remove the need for source evaluation. Its narrower
+      claim is architectural: it makes retrieval, generation, judgment, refusal,
+      and their costs separately visible.</p>
+  </section>
+
+  <section>
+    <h2>9. Conclusion</h2>
+    <p>Rebis treats a prompt architecture as a small program rather than an opaque
+      orchestration configuration. The square is where language models may speak;
+      the arrows are where evidence answers back. The same expression can be read
+      as calculus, organization chart, or mandala circuit. That correspondence is
+      the purpose of <code>o-[]-o-[]-o</code>: visible mediation between visible
+      endpoints, repeated without hiding authority.</p>
+  </section>
+
+  <footer>
+    <p>Rebis 0.2 · generated from semantic HTML and code-native SVG · 2026-07-14</p>
+  </footer>
+</article>
+</body>
+</html>

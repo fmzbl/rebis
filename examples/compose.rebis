@@ -1,0 +1,19 @@
+; String composition (`$`), variables (macro parameters), and data (`'`).
+;
+; `case` is a macro: `self` and `rival` are its variables, woven into one prompt
+; by `$`. `era` is a data string — a quoted `'"…"` that is inert text, never
+; fired — so it is spliced into the question, not sent to the model on its own.
+; Reusing a value costs nothing: this runs exactly two advocates and one
+; mediator.
+;
+;   kaos rebis run examples/compose.rebis
+(
+  (~ era () '"the streaming era")
+
+  (~ case (self rival)
+    ($ "Make the strongest case that " self " beats " rival " in hip-hop during "
+       (era) ", rebut the best counterargument, and close decisively."))
+
+  (["Deliver the verdict: who has the greater hip-hop legacy, and why?"]
+    (case "Jay-Z" "Kanye West")
+    (case "Kanye West" "Jay-Z")))

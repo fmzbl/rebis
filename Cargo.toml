@@ -1,0 +1,39 @@
+[package]
+name = "rebis-lang"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.80"
+description = "o-[]-o — an atomic language to program AI: agents, subagents, and a record calculus"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/fmzbl/rebis"
+readme = "README.md"
+keywords = ["language", "models", "agents", "graph", "dsl"]
+categories = ["compilers", "command-line-utilities"]
+# Keep the published crate lean: the paper and editor plugins live in the repo.
+exclude = ["paper/", "contrib/", ".github/"]
+
+[lib]
+name = "rebis_lang"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rebis"
+path = "src/main.rs"
+
+# Zero dependencies: the language is std-only, builds offline, and stays
+# auditable end to end. Hosts (kaos, abraxas) supply the model behind the
+# one-method Oracle trait.
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

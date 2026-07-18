@@ -1,0 +1,24 @@
+; std/debate — adversarial structures.
+(
+  ; (debate judge advocate critic claim) — two sides, one judge.
+  (~ debate (judge advocate critic claim)
+    '([,judge] (,advocate ,claim) (,critic ,claim)))
+
+  ; (panel-three judge lens-a lens-b lens-c task) — the same task through
+  ; three caller-supplied perspectives, converged.
+  (~ panel-three (judge lens-a lens-b lens-c task)
+    '([,judge] (,lens-a ,task) (,lens-b ,task) (,lens-c ,task)))
+
+  ; (cross-examine worker examiner value) — the answer is handed to its
+  ; own examiner; the examination is the result.
+  (~ cross-examine (worker examiner value)
+    '(-> (,worker ,value) (,examiner ,value)))
+
+  ; (red-team judge builder attacker repairer task) — build, attack the
+  ; build, repair under attack, judge original vs repaired.
+  ; Cost: builder fires twice.
+  (~ red-team (judge builder attacker repairer task)
+    '([,judge]
+      (,builder ,task)
+      (,repairer (-> (,builder ,task) (,attacker ,task)))))
+)

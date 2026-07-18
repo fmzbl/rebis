@@ -1,0 +1,42 @@
+; std/search — lazy alternatives, routing, and recursive descent.
+;
+; Everything here derives from the language's only lazy form, the
+; two-branch conditional square: the unselected branch never expands.
+(
+  ; (try-else accept primary fallback) — LAZY fallback: primary runs;
+  ; fallback expands only if accept rejects it. Compare std/gate's
+  ; or-else, which fires both branches.
+  (~ try-else (accept primary fallback)
+    ([(accept primary)] primary fallback))
+
+  ; (route-two first-kind specialist-a specialist-b task) — lazy routing:
+  ; classify once, then only the chosen specialist runs.
+  (~ route-two (first-kind specialist-a specialist-b task)
+    ([(first-kind task)] (specialist-a task) (specialist-b task)))
+
+  ; (route-three first-kind second-kind a b c task) — nested lazy routing.
+  (~ route-three (first-kind second-kind a b c task)
+    ([(first-kind task)]
+      (a task)
+      (route-two second-kind b c task)))
+
+  ; (dnc task simple direct left right merger) — divide and conquer:
+  ; if the task is judged simple, solve directly; else split with the two
+  ; caller strategies, recurse on each half, and merge. Cost: exponential
+  ; in depth — the simple judge and the budgets are the bound.
+  (~ dnc (task simple direct left right merger)
+    ([(simple task)]
+      (direct task)
+      ([merger]
+        (dnc (left task) simple direct left right merger)
+        (dnc (right task) simple direct left right merger))))
+
+  ; (tot value expand judge stop) — tree-of-thoughts descent: branch three
+  ; ways from the current value, judge picks a survivor, recurse until
+  ; stopped. Cost: three expands per round.
+  (~ tot (value expand judge stop)
+    ([(stop value)]
+      value
+      (tot ([judge] (expand value) (expand value) (expand value))
+           expand judge stop)))
+)

@@ -1,0 +1,26 @@
+; std/canon — judgment protocol (PHRASAL module).
+;
+; One of exactly two std modules containing prompt text. Phrasings are
+; protocol-like and individually changelogged: they alter what models see.
+(
+  ; (yes-no question) — the conditional square demands this exact shape.
+  (~ yes-no (question) '(-> ,question "Answer exactly yes or no."))
+
+  ; (agreed left right) — the canonical comparator for std/loops' stabilize
+  ; and std/committee's quorum.
+  (~ agreed (left right)
+    '(["Do the two results agree in substance? Answer exactly yes or no."]
+      ,left ,right))
+
+  ; (reconciled left right) — merge two accounts into one.
+  (~ reconciled (left right)
+    '(["Do the results agree? Reconcile them into one account."] ,left ,right))
+
+  ; (invert claim) — the canonical inverter for std/dialectic's reversible.
+  (~ invert (claim)
+    '(-> ,claim "State the opposite claim and what it would predict."))
+
+  ; (steelman claim) — strongest opposite, for honest debate setups.
+  (~ steelman (claim)
+    '(-> ,claim "Argue the strongest possible version of the opposite position."))
+)

@@ -1,0 +1,19 @@
+; Judged hill-climbing over a draft — the self-improvement kernel.
+;
+; Each round: improve the current value, keep whichever of current/improved
+; the symbol judge scores as more on-target (promptless selection), and stop
+; when the yes/no gate says the plan is verifiable. Bounded by the expansion
+; and model-call budgets; see std/evolve's cost notes.
+;
+;   kaos rebis run examples/ascend.rebis
+(
+  (# std/evolve)
+  (# std/canon)
+
+  (~ improve (value)
+    (-> value "Rewrite this plan so every step is smaller and more testable."))
+  (~ done (value)
+    (yes-no (-> value "Is every step of this plan independently verifiable?")))
+
+  (ascend "Draft: migrate the billing tables in one pass."
+    improve testable-verifiable-plan done))

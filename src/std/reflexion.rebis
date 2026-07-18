@@ -1,0 +1,19 @@
+; std/reflexion — critique-and-retry structures.
+(
+  ; (reflexion worker critic task) — attempt, critique the attempt, then
+  ; retry the task with the critique as input. Cost: worker fires twice.
+  (~ reflexion (worker critic task)
+    '(-> (,critic (,worker ,task)) (,worker ,task)))
+
+  ; (exchange advocate critic claim) — argue, rebut, respond: each stage
+  ; sees the previous as input; the advocate ends holding the floor.
+  (~ exchange (advocate critic claim)
+    '(-> (,advocate ,claim) (,critic ,claim) (,advocate ,claim)))
+
+  ; (duel judge advocate critic claim) — two exchanges with the floor
+  ; reversed, judged; symmetric so neither side wins by going last.
+  (~ duel (judge advocate critic claim)
+    '([,judge]
+      (exchange ,advocate ,critic ,claim)
+      (exchange ,critic ,advocate ,claim)))
+)

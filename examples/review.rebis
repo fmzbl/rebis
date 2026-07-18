@@ -1,0 +1,22 @@
+; A red-teamed design review, assembled entirely from the standard library.
+;
+; The builder proposes with evidence; the attacker finds the strongest
+; failure mode; the repairer revises under attack; the symbol judge keeps
+; whichever design — original or repaired — round-trips best onto the
+; verdict tokens. Cost note: the builder fires twice (see std/debate).
+;
+;   kaos rebis run examples/review.rebis
+(
+  (# std/debate)
+  (# std/shape)
+
+  (~ build (task)
+    (with-evidence (-> task "Propose the design.")))
+  (~ attack (task)
+    (-> task "Find the strongest failure mode of the proposed design."))
+  (~ repair (task)
+    (-> task "Revise the design so it survives the attack."))
+
+  (red-team surviving-verified-design
+    build attack repair
+    "Design the retry queue for the payment service."))

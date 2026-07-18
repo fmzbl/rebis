@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 940" role="img" aria-labelledby="title desc">
+  <title id="title">Rebis pure evaluation and bounded agent execution flow</title>
+  <desc id="desc">A deterministic pipeline parses, type-checks, lowers, and evaluates a Rebis program against an immutable snapshot. Optional host execution handles unsupported forward gaps under explicit budgets and records only provisional proposals before an external gate.</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#40354a"/></marker>
+    <marker id="arr-c" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#087e99"/></marker>
+    <marker id="arr-m" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#a92a68"/></marker>
+    <style>
+      .bg{fill:#f6f1e7}.title{font:700 40px ui-serif,Georgia,serif;fill:#251d30}.sub{font:500 18px system-ui,sans-serif;fill:#6d6375}
+      .lane{font:700 14px system-ui,sans-serif;letter-spacing:.13em;fill:#746a7b}.head{font:700 19px system-ui,sans-serif;fill:#292033}
+      .copy{font:500 15px system-ui,sans-serif;fill:#5b5164}.code{font:600 14px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#302638}
+      .box{fill:#fffdf8;stroke:#d6ccbd;stroke-width:2}.pure{fill:#edf8fa;stroke:#087e99;stroke-width:3}.effect{fill:#fff5d5;stroke:#ad7900;stroke-width:3}
+      .gate{fill:#faedf3;stroke:#a92a68;stroke-width:3}.done{fill:#f0ebf4;stroke:#5e4d69;stroke-width:3}.error{fill:#fff;stroke:#b93650;stroke-width:3}
+      .arrow{fill:none;stroke:#40354a;stroke-width:4;marker-end:url(#arr)}.arrowC{fill:none;stroke:#087e99;stroke-width:4;marker-end:url(#arr-c)}
+      .arrowM{fill:none;stroke:#a92a68;stroke-width:4;marker-end:url(#arr-m)}.dash{fill:none;stroke:#9a8fa1;stroke-width:3;stroke-dasharray:7 7;marker-end:url(#arr)}
+      .sep{stroke:#c9bece;stroke-width:2;stroke-dasharray:10 8}.badge{fill:#292033}.badgeText{font:700 12px system-ui,sans-serif;letter-spacing:.08em;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1680" height="940" class="bg"/>
+  <text x="840" y="56" text-anchor="middle" class="title">Evaluation is a function; execution is a host</text>
+  <text x="840" y="90" text-anchor="middle" class="sub">The same program can be analyzed without capabilities or executed under an explicit, bounded policy.</text>
+
+  <text x="42" y="145" class="lane">PURE · DETERMINISTIC · NO I/O</text>
+  <line x1="30" y1="526" x2="1650" y2="526" class="sep"/>
+  <text x="42" y="566" class="lane">OPTIONAL HOST · EFFECTS ARE EXPLICIT AND PROVISIONAL</text>
+
+  <!-- pure pipeline -->
+  <g transform="translate(44 184)">
+    <rect width="218" height="176" rx="18" class="box"/>
+    <text x="22" y="38" class="lane">SOURCE</text>
+    <text x="22" y="72" class="head">UTF-8 Rebis term</text>
+    <text x="22" y="105" class="code">(~ (-&gt; a b)</text>
+    <text x="22" y="129" class="code">   (&lt;- c d))</text>
+    <text x="22" y="158" class="copy">No comments or hidden forms</text>
+  </g>
+  <path d="M262 272 H303" class="arrow"/>
+  <g transform="translate(316 184)">
+    <rect width="218" height="176" rx="18" class="pure"/>
+    <text x="22" y="38" class="lane">PARSE + CHECK</text>
+    <text x="22" y="72" class="head">Typed AST</text>
+    <text x="22" y="105" class="code">Atom | Group</text>
+    <text x="22" y="129" class="code">Forward | Mediate</text>
+    <text x="22" y="153" class="code">Backflow</text>
+  </g>
+  <path d="M534 272 H575" class="arrow"/>
+  <g transform="translate(588 184)">
+    <rect width="238" height="176" rx="18" class="pure"/>
+    <text x="22" y="38" class="lane">LOWER</text>
+    <text x="22" y="72" class="head">rebis-region-v1</text>
+    <text x="22" y="105" class="code">RegionId + NodeId</text>
+    <text x="22" y="129" class="code">typed edges + mediators</text>
+    <text x="22" y="153" class="code">SourceMap + provenance</text>
+  </g>
+  <path d="M826 272 H867" class="arrow"/>
+  <g transform="translate(880 184)">
+    <rect width="266" height="176" rx="18" class="pure"/>
+    <text x="22" y="38" class="lane">EVALUATE WITH S₀</text>
+    <text x="22" y="72" class="head">Evidence algebra</text>
+    <text x="22" y="105" class="code">resolve · broaden · support</text>
+    <text x="22" y="129" class="code">Jaccard · attribution</text>
+    <text x="22" y="153" class="code">trace every EvidenceRef</text>
+  </g>
+  <path d="M1146 272 H1187" class="arrow"/>
+  <g transform="translate(1200 184)">
+    <rect width="196" height="176" rx="18" class="done"/>
+    <text x="22" y="38" class="lane">REPORT</text>
+    <text x="22" y="72" class="head">Value + trace</text>
+    <text x="22" y="105" class="code">score.authoritative</text>
+    <text x="22" y="129" class="code">gaps[]</text>
+    <text x="22" y="153" class="code">effects = []</text>
+  </g>
+
+  <path d="M1396 242 H1436" class="arrowC"/>
+  <g transform="translate(1448 184)">
+    <rect width="188" height="82" rx="16" class="done"/>
+    <text x="94" y="34" text-anchor="middle" class="head">Grounded</text>
+    <text x="94" y="59" text-anchor="middle" class="copy">return report</text>
+  </g>
+  <path d="M1396 313 H1436" class="arrowM"/>
+  <g transform="translate(1448 298)">
+    <rect width="188" height="82" rx="16" class="error"/>
+    <text x="94" y="34" text-anchor="middle" class="head">Gap</text>
+    <text x="94" y="59" text-anchor="middle" class="copy">return or offer to host</text>
+  </g>
+
+  <rect x="880" y="402" width="516" height="70" rx="14" fill="#292033"/>
+  <text x="1138" y="430" text-anchor="middle" class="badgeText">PURITY CONTRACT</text>
+  <text x="1138" y="455" text-anchor="middle" fill="#e9e0ef" class="copy">Neither a low score nor a gap authorizes generation, mutation, or retry.</text>
+
+  <!-- execution lane -->
+  <path d="M1542 380 V610 H1391" class="dash"/>
+  <g transform="translate(1120 602)">
+    <rect width="270" height="236" rx="20" class="effect"/>
+    <text x="24" y="40" class="lane">BOUNDED SCHEDULER</text>
+    <text x="24" y="76" class="head">Explicit HostPolicy</text>
+    <text x="24" y="110" class="code">forward_calls ≤ gaps</text>
+    <text x="24" y="136" class="code">depth / concurrency</text>
+    <text x="24" y="162" class="code">timeout / output_bytes</text>
+    <text x="24" y="188" class="code">allowed tools + model IDs</text>
+    <rect x="24" y="202" width="192" height="26" rx="13" class="badge"/>
+    <text x="120" y="220" text-anchor="middle" class="badgeText">FAIL CLOSED ON LIMIT</text>
+  </g>
+  <path d="M1120 720 H1074" class="arrowM"/>
+  <g transform="translate(804 602)">
+    <rect width="258" height="236" rx="20" class="effect"/>
+    <text x="24" y="40" class="lane">CAPABILITY CALL</text>
+    <text x="24" y="76" class="head">Model or tool</text>
+    <text x="24" y="110" class="copy">Receives only declared context.</text>
+    <text x="24" y="138" class="copy">May decline with no proposal.</text>
+    <text x="24" y="166" class="copy">Output is byte-capped and hashed.</text>
+    <text x="24" y="200" class="code">result: Hypothesis?</text>
+  </g>
+  <path d="M804 720 H758" class="arrowM"/>
+  <g transform="translate(488 602)">
+    <rect width="258" height="236" rx="20" class="effect"/>
+    <text x="24" y="40" class="lane">APPEND ONLY</text>
+    <text x="24" y="76" class="head">Provisional ledger</text>
+    <text x="24" y="110" class="code">proposal_id + digest</text>
+    <text x="24" y="136" class="code">program/node lineage</text>
+    <text x="24" y="162" class="code">host/model/tool identity</text>
+    <text x="24" y="188" class="code">authority = provisional</text>
+    <text x="24" y="218" class="copy">Never merged into S₀.</text>
+  </g>
+  <path d="M488 720 H442" class="arrowM"/>
+  <g transform="translate(82 602)">
+    <rect width="348" height="236" rx="20" class="gate"/>
+    <text x="24" y="40" class="lane">EXTERNAL GATE</text>
+    <text x="24" y="76" class="head">Independent evidence</text>
+    <text x="24" y="110" class="copy">Tests, human review, signed data, or a</text>
+    <text x="24" y="136" class="copy">frozen verifier evaluate the proposal.</text>
+    <text x="24" y="170" class="code">reject | defer | admit-later</text>
+    <text x="24" y="202" class="copy">Admission creates S₁ in a new transaction;</text>
+    <text x="24" y="224" class="copy">Rebis itself has no commit instruction.</text>
+  </g>
+
+  <text x="840" y="892" text-anchor="middle" class="sub">Only Forward gaps are eligible for host proposals. Mediate and Backflow remain pure and cannot be generated into success.</text>
+</svg>

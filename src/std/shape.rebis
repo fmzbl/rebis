@@ -1,0 +1,20 @@
+; std/shape — answer contracts (PHRASAL module).
+;
+; Output-shape wrappers. Contracted answers also round-trip more cleanly
+; through deterministic gates than prose does.
+(
+  ; (final-only work) — strip preamble; deliver only the result.
+  (~ final-only (work)
+    '(-> ,work "Reply with only the final result, nothing else."))
+
+  ; (one-word work) — classification shape.
+  (~ one-word (work) '(-> ,work "Answer with exactly one word."))
+
+  ; (stepwise work) — audited-reasoning shape.
+  (~ stepwise (work)
+    '(-> ,work "Show each step of the reasoning, then the result."))
+
+  ; (with-evidence work) — every claim carries its evidence.
+  (~ with-evidence (work)
+    '(-> ,work "For every claim, quote the evidence it rests on."))
+)

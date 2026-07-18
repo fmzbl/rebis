@@ -1,0 +1,5 @@
+release 3.2 shipped friday night
+tokenizer regression reported saturday morning
+tests were green before the release
+customers saw garbled unicode output
+the hotfix reverted the tokenizer change

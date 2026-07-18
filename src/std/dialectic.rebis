@@ -1,0 +1,36 @@
+; std/dialectic — the reconciliation geometry.
+;
+; Direction-as-semantics, packaged. All reconciler/inverter phrasings are
+; caller parameters; see std/canon for canonical ones.
+(
+  ; (diamond reconcile premise consequence) — flow the same pair in BOTH
+  ; orientations and reconcile the two readings of one edge.
+  (~ diamond (reconcile premise consequence)
+    '([,reconcile] (-> ,premise ,consequence) (<- ,premise ,consequence)))
+
+  ; (reversible claim inverter) — assert a claim only after its own
+  ; inversion backflows into it.
+  (~ reversible (claim inverter) '(<- ,claim (,inverter ,claim)))
+
+  ; (synthesis synthesizer thesis antithesis) — thesis–antithesis–synthesis
+  ; with the antithesis grounded back into the thesis before synthesis.
+  (~ synthesis (synthesizer thesis antithesis)
+    '([,synthesizer] ,thesis (<- ,antithesis ,thesis)))
+
+  ; (face name reconcile a b c) — the doubled-edge triangle: every pair of
+  ; claims reconciled in both directions, pinned to a named invariant.
+  ; Cost: six arrow chains and four mediations.
+  (~ face (name reconcile a b c)
+    '(<- ,name
+      ([,reconcile]
+        (diamond ,reconcile ,a ,b)
+        (diamond ,reconcile ,b ,c)
+        (diamond ,reconcile ,c ,a))))
+
+  ; (anneal structure deepen settled) — a structure deepens itself until
+  ; judged settled. Cost: the whole structure refires every round.
+  (~ anneal (structure deepen settled)
+    ([(settled structure)]
+      structure
+      (anneal (deepen structure) deepen settled)))
+)
